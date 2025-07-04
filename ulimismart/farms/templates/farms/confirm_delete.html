@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Farm{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-md">
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="bg-red-600 px-6 py-4">
+      <h1 class="text-xl font-bold text-white">Delete Farm</h1>
+    </div>
+    
+    <div class="p-6">
+      <p class="text-gray-700 mb-6">Are you sure you want to delete the farm <strong>"{{ farm.name }}"</strong>? This action cannot be undone.</p>
+      
+      <form method="post">
+        {% csrf_token %}
+        <div class="flex justify-end space-x-3">
+          <a href="{% url 'farms:detail' farm.pk %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
+            Cancel
+          </a>
+          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+            Delete Farm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

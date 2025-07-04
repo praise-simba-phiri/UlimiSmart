@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Farm{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-800">
+      {% if form.instance.pk %}
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+      Edit Farm
+      {% else %}
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Add New Farm
+      {% endif %}
+    </h1>
+    <p class="text-gray-600">Manage your farm details</p>
+  </div>
+
+  <form method="post" class="bg-white shadow-md rounded-lg p-6">
+    {% csrf_token %}
+    
+    <div class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Farm Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.name.errors }}</p>
+        {% endif %}
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+        {{ form.location }}
+        <p class="mt-1 text-xs text-gray-500">Village or area name</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Size (hectares)</label>
+          {{ form.size }}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Soil Type</label>
+          {{ form.soil_type }}
+        </div>
+      </div>
+      
+      <div class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
+        <a href="{% if form.instance.pk %}{% url 'farms:detail' form.instance.pk %}{% else %}{% url 'farms:list' %}{% endif %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
+          Cancel
+        </a>
+        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+          {% if form.instance.pk %}Update{% else %}Create{% endif %} Farm
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

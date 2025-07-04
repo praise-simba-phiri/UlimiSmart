@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login to UlimiSmart{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-[url('{% static 'images/farm-bg.jpg' %}')] bg-cover bg-center flex items-center">
+  <div class="max-w-md w-full mx-auto p-8 bg-white bg-opacity-90 rounded-lg shadow-lg backdrop-blur-sm">
+    <div class="text-center mb-8">
+      <img src="{% static 'images/logo.png' %}" alt="UlimiSmart Logo" class="h-20 mx-auto">
+      <h1 class="mt-4 text-3xl font-bold text-gray-800">Welcome Back</h1>
+      <p class="text-green-700">Smart farming for Malawi's future</p>
+    </div>
+    
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      {% if form.errors %}
+      <div class="p-3 bg-red-100 text-red-700 rounded-md">
+        Invalid username or password
+      </div>
+      {% endif %}
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+        <input type="text" name="username" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent">
+      </div>
+      
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+          <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+        </div>
+        
+        <div class="text-sm">
+          <a href="#" class="font-medium text-green-600 hover:text-green-500">Forgot password?</a>
+        </div>
+      </div>
+      
+      <div>
+        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+          Sign in
+        </button>
+      </div>
+    </form>
+    
+    <div class="mt-6">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">New to UlimiSmart?</span>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <a href="{% url 'users:register' %}" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+          Create new account
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

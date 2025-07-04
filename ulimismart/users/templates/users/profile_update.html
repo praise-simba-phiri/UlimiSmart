@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+<div class="glass-container">
+  <div class="glass-card">
+    <div class="glass-header">
+      <h1 class="glass-title">Update Profile</h1>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" class="glass-form">
+      {% csrf_token %}
+      
+      <div class="flex flex-col items-center mb-8">
+        <div class="relative group">
+          <div class="avatar-upload">
+            {% if form.instance.profile_picture %}
+              <img src="{{ form.instance.profile_picture.url }}" alt="Current Profile Picture" id="profile-picture-preview" class="avatar-image">
+            {% else %}
+              <div id="profile-picture-default" class="avatar-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" class="avatar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            {% endif %}
+            <label class="avatar-edit">
+              <input type="file" name="profile_picture" id="id_profile_picture" accept="image/*" class="hidden">
+              <span class="edit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-input-group">
+          <label class="glass-label">First Name</label>
+          {{ form.first_name }}
+        </div>
+        <div class="glass-input-group">
+          <label class="glass-label">Last Name</label>
+          {{ form.last_name }}
+        </div>
+        <div class="glass-input-group">
+          <label class="glass-label">Email</label>
+          {{ form.email }}
+        </div>
+        <div class="glass-input-group">
+          <label class="glass-label">Phone Number</label>
+          {{ form.phone_number }}
+          <p class="glass-hint">Format: +265XXXXXXXXX</p>
+        </div>
+        <div class="glass-input-group md:col-span-2">
+          <label class="glass-label">Location</label>
+          {{ form.location }}
+        </div>
+      </div>
+      
+      <div class="glass-actions">
+        <a href="{% url 'users:profile' %}" class="glass-btn glass-btn-secondary">
+          Cancel
+        </a>
+        <button type="submit" class="glass-btn glass-btn-primary">
+          Update Profile
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('id_profile_picture').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('profile-picture-preview');
+      const defaultIcon = document.getElementById('profile-picture-default');
+      
+      if (!preview) {
+        const div = document.querySelector('.relative');
+        const img = document.createElement('img');
+        img.id = 'profile-picture-preview';
+        img.className = 'h-full w-full object-cover';
+        img.src = e.target.result;
+        div.insertBefore(img, div.firstChild);
+        if (defaultIcon) defaultIcon.remove();
+      } else {
+        preview.src = e.target.result;
+      }
+    }
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+{% endblock %}

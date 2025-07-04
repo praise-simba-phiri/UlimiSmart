@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Smart Reminder Suggestions{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="bg-blue-600 px-6 py-4">
+      <h1 class="text-2xl font-bold text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        Smart Reminder Suggestions
+      </h1>
+    </div>
+    
+    <div class="p-6">
+      <form method="post" x-data="{
+        farm: '',
+        crop: '',
+        activity: '',
+        customDate: false,
+        loadCrops() {
+          if (this.farm) {
+            // In a real app, you would fetch crops for the selected farm via AJAX
+            this.crop = '';
+          }
+        }
+      }">
+        {% csrf_token %}
+        
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Farm</label>
+            {{ form.farm }}
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Crop (Optional)</label>
+            {{ form.crop }}
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Suggested Activity</label>
+            {{ form.activity }}
+          </div>
+          
+          <div class="flex items-center">
+            {{ form.custom_date }}
+            <label for="{{ form.custom_date.id_for_label }}" class="ml-2 block text-sm text-gray-700">Set custom date</label>
+          </div>
+          
+          <div x-show="customDate">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Custom Date</label>
+            {{ form.date }}
+          </div>
+          
+          <div class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
+            <a href="{% url 'reminders:list' %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
+              Cancel
+            </a>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              Create Reminder
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Set minimum date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('id_date').min = today;
+});
+</script>
+{% endblock %}

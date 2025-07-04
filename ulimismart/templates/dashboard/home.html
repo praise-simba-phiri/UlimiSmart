@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div x-data="{ activeTab: 'overview' }">
+    <h1 class="text-2xl font-bold mb-6">Welcome, {{ user.get_full_name|default:user.username }}</h1>
+    
+    <!-- Tabs -->
+    <div class="flex border-b mb-6">
+        <button @click="activeTab = 'overview'" 
+                :class="{ 'border-b-2 border-green-600 text-green-600': activeTab === 'overview' }"
+                class="px-4 py-2 font-medium">Overview</button>
+        <button @click="activeTab = 'farms'" 
+                :class="{ 'border-b-2 border-green-600 text-green-600': activeTab === 'farms' }"
+                class="px-4 py-2 font-medium">My Farms</button>
+        <button @click="activeTab = 'activities'" 
+                :class="{ 'border-b-2 border-green-600 text-green-600': activeTab === 'activities' }"
+                class="px-4 py-2 font-medium">Activities</button>
+    </div>
+    
+    <!-- Overview Tab -->
+    <div x-show="activeTab === 'overview'" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Farm Summary -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Farm Summary</h2>
+                <p class="text-gray-600">Total Farms: {{ farms.count }}</p>
+                <p class="text-gray-600">Active Crops: {{ farms.first.crops.count }}</p>
+            </div>
+            
+            <!-- Weather -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Weather</h2>
+                {% if weather_data %}
+                    <p class="text-gray-600">Condition: {{ weather_data.get_condition_display }}</p>
+                    <p class="text-gray-600">Temperature: {{ weather_data.temperature }}°C</p>
+                    <p class="text-gray-600">Rainfall: {{ weather_data.rainfall }}mm</p>
+                {% else %}
+                    <p class="text-gray-600">No weather data available</p>
+                {% endif %}
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+                <div class="space-y-2">
+                    <a href="{% url 'farms:create' %}" class="block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
+                        Add New Farm
+                    </a>
+                    <a href="{% url 'activities:create' %}" class="block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-center">
+                        Log Activity
+                    </a>
+                    <a href="{% url 'reminders:create' %}" class="block bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 text-center">
+                        Add Reminder
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activities -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
+            {% if recent_activities %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Farm</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for activity in recent_activities %}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ activity.date }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ activity.get_activity_type_display }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ activity.farm.name }}</td>
+                                    <td class="px-6 py-4">{{ activity.notes|truncatechars:50 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-gray-600">No recent activities found.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Farms Tab -->
+    <div x-show="activeTab === 'farms'" class="space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">My Farms</h2>
+                <a href="{% url 'farms:create' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Add New Farm
+                </a>
+            </div>
+            
+            {% if farms %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for farm in farms %}
+                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <h3 class="font-semibold text-lg mb-2">{{ farm.name }}</h3>
+                            <p class="text-gray-600 mb-1">Location: {{ farm.location }}</p>
+                            <p class="text-gray-600 mb-1">Size: {{ farm.size }} ha</p>
+                            <p class="text-gray-600 mb-3">Soil: {{ farm.get_soil_type_display }}</p>
+                            <div class="flex space-x-2">
+                                <a href="{% url 'farms:detail' farm.id %}" class="text-blue-600 hover:underline">View</a>
+                                <a href="{% url 'farms:update' farm.id %}" class="text-yellow-600 hover:underline">Edit</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">You don't have any farms yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Activities Tab -->
+    <div x-show="activeTab === 'activities'" class="space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Recent Activities</h2>
+                <a href="{% url 'activities:create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Log New Activity
+                </a>
+            </div>
+            
+            {% if recent_activities %}
+                <div class="space-y-4">
+                    {% for activity in recent_activities %}
+                        <div class="border-b pb-4">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">{{ activity.get_activity_type_display }}</h3>
+                                <span class="text-gray-500">{{ activity.date }}</span>
+                            </div>
+                            <p class="text-gray-600 mt-1">Farm: {{ activity.farm.name }}</p>
+                            {% if activity.notes %}
+                                <p class="mt-2">{{ activity.notes }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'activities:list' %}" class="text-green-600 hover:underline">View all activities</a>
+                </div>
+            {% else %}
+                <p class="text-gray-600">No activities found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
