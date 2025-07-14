@@ -1,64 +1,75 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Reminder: {{ reminder.title }}{% endblock %}
+{% block title %}{{ reminder.title }} Details{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="{% if reminder.is_completed %}bg-green-600{% elif reminder.is_overdue %}bg-red-600{% else %}bg-blue-600{% endif %} px-6 py-4">
-      <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-white">{{ reminder.title }}</h1>
-        <span class="px-3 py-1 rounded-full text-sm font-medium 
-          {% if reminder.is_completed %}bg-green-100 text-green-800
-          {% elif reminder.is_overdue %}bg-red-100 text-red-800
-          {% else %}bg-blue-100 text-blue-800{% endif %}">
-          {% if reminder.is_completed %}Completed
-          {% elif reminder.is_overdue %}Overdue
-          {% else %}Pending{% endif %}
-        </span>
-      </div>
-      <p class="text-white opacity-90 mt-1">{{ reminder.get_reminder_type_display }}</p>
-    </div>
-    
-    <div class="p-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <h3 class="text-sm font-medium text-gray-500">Farm</h3>
-          <p class="mt-1 text-sm text-gray-900">{{ reminder.farm.name }}</p>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-primary-600 dark:bg-primary-700 p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-xl font-semibold text-white">{{ reminder.title }}</h1>
+                    <p class="text-primary-100 mt-1 flex items-center">
+                        <i class="icon-location-pin mr-2"></i>
+                        {{ reminder.farm.name }}
+                    </p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-sm font-medium 
+                    {% if reminder.is_completed %}bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400
+                    {% elif reminder.is_overdue %}bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400
+                    {% else %}bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400{% endif %}">
+                    {% if reminder.is_completed %}Completed
+                    {% elif reminder.is_overdue %}Overdue
+                    {% else %}Pending{% endif %}
+                </span>
+            </div>
         </div>
-        <div>
-          <h3 class="text-sm font-medium text-gray-500">Due Date</h3>
-          <p class="mt-1 text-sm text-gray-900">
-            {{ reminder.due_date|date:"M d, Y" }}
-            {% if reminder.is_overdue %}
-            <span class="ml-2 text-xs text-red-600">(overdue by {{ reminder.due_date|timesince }})</span>
+        
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Reminder Type</h3>
+                    <p class="text-gray-900 dark:text-white">{{ reminder.get_reminder_type_display }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Due Date</h3>
+                    <p class="text-gray-900 dark:text-white">
+                        {{ reminder.due_date|date:"M d, Y" }}
+                        {% if reminder.is_overdue %}
+                        <span class="text-red-600 dark:text-red-400 ml-2">(Overdue)</span>
+                        {% endif %}
+                    </p>
+                </div>
+                {% if reminder.is_completed %}
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Completed On</h3>
+                    <p class="text-gray-900 dark:text-white">{{ reminder.completed_date|date:"M d, Y" }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if reminder.notes %}
+            <div class="mb-6">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Notes</h3>
+                <p class="text-gray-900 dark:text-white whitespace-pre-line">{{ reminder.notes }}</p>
+            </div>
             {% endif %}
-          </p>
+            
+            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+                {% if not reminder.is_completed %}
+                <a href="{% url 'reminders:complete' reminder.pk %}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <i class="icon-check mr-2"></i> Mark Complete
+                </a>
+                {% endif %}
+                <a href="{% url 'reminders:update' reminder.pk %}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="icon-note mr-2"></i> Edit
+                </a>
+                <a href="{% url 'reminders:delete' reminder.pk %}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i class="icon-trash mr-2"></i> Delete
+                </a>
+            </div>
         </div>
-      </div>
-      
-      {% if reminder.notes %}
-      <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-500">Notes</h3>
-        <p class="mt-1 text-sm text-gray-900 whitespace-pre-line">{{ reminder.notes }}</p>
-      </div>
-      {% endif %}
-      
-      <div class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
-        <a href="{% url 'reminders:list' %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
-          Back to List
-        </a>
-        {% if not reminder.is_completed %}
-        <a href="{% url 'reminders:complete' reminder.pk %}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-          Mark Complete
-        </a>
-        {% endif %}
-        <a href="{% url 'reminders:update' reminder.pk %}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-          Edit
-        </a>
-      </div>
     </div>
-  </div>
 </div>
 {% endblock %}

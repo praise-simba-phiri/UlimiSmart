@@ -1,0 +1,191 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-r from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white py-20 md:py-32">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                    Revolutionizing Agriculture in Malawi with AI
+                </h1>
+                <p class="text-xl mb-8 text-green-100 dark:text-green-200">
+                    UlimiSmart helps farmers predict crop yields, manage farms, and make data-driven decisions.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{% url 'users:register' %}" class="bg-white text-green-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium text-center transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        Get Started
+                    </a>
+                    <a href="{% url 'core:how_it_works' %}" class="border-2 border-white text-white hover:bg-white hover:text-green-600 px-6 py-3 rounded-lg font-medium text-center transition-all duration-300 transform hover:scale-105">
+                        How It Works
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <img src="{% static 'core/images/farmer-hero.png' %}" alt="Happy Farmer" class="w-full max-w-lg mx-auto rounded-lg shadow-2xl">
+            </div>
+        </div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"></div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Key Features</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Everything you need to manage your farm effectively and maximize your yields
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+                <div class="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-cloud-sun text-2xl text-green-600 dark:text-green-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Real-time Weather</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Get accurate weather forecasts and alerts specific to your farm location.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+                <div class="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-line text-2xl text-green-600 dark:text-green-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Yield Prediction</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    AI-powered predictions to estimate your crop yields based on various factors.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+                <div class="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-tasks text-2xl text-green-600 dark:text-green-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Activity Management</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Plan and track all farming activities with reminders and progress tracking.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">How UlimiSmart Works</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Simple steps to transform your farming experience
+            </p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            <div class="relative">
+                <!-- Timeline -->
+                <div class="absolute left-1/2 w-1 h-full bg-green-200 dark:bg-green-900/50 transform -translate-x-1/2"></div>
+                
+                <!-- Step 1 -->
+                <div class="flex items-center mb-12">
+                    <div class="w-1/2 pr-8 text-right">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Create Your Farm</h3>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Add your farm details including location, size, and soil type.
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-green-500 dark:bg-green-600 flex items-center justify-center text-white font-bold z-10 mx-auto">
+                        1
+                    </div>
+                    <div class="w-1/2 pl-8">
+                        <img src="{% static 'core/images/create-farm.png' %}" alt="Create Farm" class="rounded-lg shadow-md">
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flex items-center mb-12">
+                    <div class="w-1/2 pr-8 text-right">
+                        <img src="{% static 'core/images/add-crops.png' %}" alt="Add Crops" class="rounded-lg shadow-md">
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-green-500 dark:bg-green-600 flex items-center justify-center text-white font-bold z-10 mx-auto">
+                        2
+                    </div>
+                    <div class="w-1/2 pl-8">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Add Your Crops</h3>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Specify the crops you're growing with planting dates and varieties.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flex items-center mb-12">
+                    <div class="w-1/2 pr-8 text-right">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Get Insights</h3>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Receive weather alerts, activity reminders, and yield predictions.
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-green-500 dark:bg-green-600 flex items-center justify-center text-white font-bold z-10 mx-auto">
+                        3
+                    </div>
+                    <div class="w-1/2 pl-8">
+                        <img src="{% static 'core/images/insights.png' %}" alt="Get Insights" class="rounded-lg shadow-md">
+                    </div>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="flex items-center">
+                    <div class="w-1/2 pr-8 text-right">
+                        <img src="{% static 'core/images/monitor.png' %}" alt="Monitor Progress" class="rounded-lg shadow-md">
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-green-500 dark:bg-green-600 flex items-center justify-center text-white font-bold z-10 mx-auto">
+                        4
+                    </div>
+                    <div class="w-1/2 pl-8">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Monitor Progress</h3>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Track your farming activities and compare actual vs predicted yields.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-16">
+            <a href="{% url 'core:how_it_works' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                Learn More About How It Works
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+{% include 'core/includes/_testimonials.html' %}
+
+<!-- CTA Section -->
+<section class="py-20 bg-green-600 dark:bg-green-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Ready to Transform Your Farming?</h2>
+        <p class="text-xl mb-8 max-w-2xl mx-auto text-green-100 dark:text-green-200">
+            Join hundreds of farmers in Malawi who are already benefiting from UlimiSmart.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'users:register' %}" class="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-medium text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                Get Started for Free
+            </a>
+            <a href="{% url 'core:contact' %}" class="border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 rounded-lg font-medium text-lg transition-all duration-300 transform hover:scale-105">
+                Contact Us
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block main %}
+<!-- How It Works Header -->
+<section class="py-16 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-4">How UlimiSmart Works</h1>
+        <p class="text-xl max-w-2xl mx-auto text-green-100 dark:text-green-200">
+            A step-by-step guide to transforming your farming experience
+        </p>
+    </div>
+</section>
+
+<!-- Detailed Steps -->
+<section class="py-20 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 max-w-5xl">
+        <div class="space-y-16">
+            <!-- Step 1 -->
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-1/2">
+                    <div class="bg-green-100 dark:bg-green-900/20 rounded-lg p-1 inline-block mb-4">
+                        <span class="text-green-800 dark:text-green-200 font-medium px-3 py-1">Step 1</span>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Create Your Account</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Sign up for a free UlimiSmart account. It takes less than 2 minutes to get started.
+                    </p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>No credit card required</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Available on all devices</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Get started immediately</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="{% static 'core/images/signup-screenshot.png' %}" alt="Sign Up Process" class="rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                <div class="md:w-1/2">
+                    <div class="bg-green-100 dark:bg-green-900/20 rounded-lg p-1 inline-block mb-4">
+                        <span class="text-green-800 dark:text-green-200 font-medium px-3 py-1">Step 2</span>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Add Your Farms</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Input details about your farm including location, size, and soil characteristics.
+                    </p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Pinpoint your farm on our interactive map</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Add multiple farms in different locations</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Specify soil type and irrigation methods</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="{% static 'core/images/add-farm-screenshot.png' %}" alt="Add Farm Process" class="rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-1/2">
+                    <div class="bg-green-100 dark:bg-green-900/20 rounded-lg p-1 inline-block mb-4">
+                        <span class="text-green-800 dark:text-green-200 font-medium px-3 py-1">Step 3</span>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Input Crop Details</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Tell us what crops you're growing and when you planted them.
+                    </p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Select from common Malawian crops</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Record planting dates and seed varieties</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Track growth stages and inputs</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="{% static 'core/images/crop-details-screenshot.png' %}" alt="Crop Details" class="rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                <div class="md:w-1/2">
+                    <div class="bg-green-100 dark:bg-green-900/20 rounded-lg p-1 inline-block mb-4">
+                        <span class="text-green-800 dark:text-green-200 font-medium px-3 py-1">Step 4</span>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Receive Insights & Predictions</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Get personalized recommendations and yield predictions based on your data.
+                    </p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Weather forecasts specific to your farm</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>AI-powered yield predictions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Activity reminders and best practices</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="{% static 'core/images/insights-screenshot.png' %}" alt="Insights Dashboard" class="rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 text-center">
+            <a href="{% url 'users:register' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-medium text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                Start Your Farming Journey Today
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

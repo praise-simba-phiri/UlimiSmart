@@ -1,183 +1,75 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Yield Predictions{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-800">Yield Predictions</h1>
-      <p class="text-green-600">Smart forecasts for your crops</p>
-    </div>
-    <a href="#" class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-      Generate Report
-    </a>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-lg font-semibold mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-        Prediction Summary
-      </h2>
-      <div class="space-y-4">
-        <div>
-          <p class="text-sm text-gray-500">Total Predictions</p>
-          <p class="text-2xl font-bold">{{ predictions.count }}</p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500">Most Recent</p>
-          <p class="text-lg">{{ latest_prediction.date|date:"M d, Y"|default:"None yet" }}</p>
-        </div>
-      </div>
+<div class="glass-container">
+    <div class="glass-header">
+        <h1 class="text-2xl font-bold">Prediction Dashboard</h1>
     </div>
 
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-lg font-semibold mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-        Average Yield
-      </h2>
-      <div class="flex items-end">
-        <p class="text-2xl font-bold mr-2">{{ average_yield|default:"-" }}</p>
-        <p class="text-sm text-gray-500">kg/ha across all crops</p>
-      </div>
-      <div class="mt-4">
-        <p class="text-sm text-gray-500">Based on {{ crops_count }} active crops</p>
-      </div>
-    </div>
-
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-lg font-semibold mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        Prediction Accuracy
-      </h2>
-      <div class="flex items-end">
-        <p class="text-2xl font-bold mr-2">{{ accuracy|default:"-" }}</p>
-        <p class="text-sm text-gray-500">confidence level</p>
-      </div>
-      <div class="mt-4">
-        <p class="text-sm text-gray-500">Based on historical data</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-    <div class="bg-green-600 px-6 py-4">
-      <h2 class="text-xl font-bold text-white">Recent Predictions</h2>
-    </div>
-    <div class="p-6">
-      {% if predictions %}
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Farm</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Predicted Yield</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
-              <th scope="col" class="relative px-6 py-3"><span class="sr-only">View</span></th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for prediction in predictions|slice:":5" %}
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                    </svg>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ prediction.crop.get_crop_type_display }}</div>
-                  </div>
+    <div class="glass-card mt-6">
+        <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Recent Predictions</h2>
+            
+            {% if predictions %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for prediction in predictions %}
+                <div class="border rounded-lg p-4 hover:shadow-lg transition-shadow">
+                    <h3 class="font-medium">{{ prediction.crop.get_crop_type_display }}</h3>
+                    <p class="text-2xl font-bold text-green-600">{{ prediction.predicted_yield }} kg/ha</p>
+                    <p class="text-sm text-gray-500">{{ prediction.created_at|date:"M d, Y" }}</p>
+                    <a href="{% url 'predictions:crop_prediction' prediction.crop.id %}" 
+                       class="text-green-600 hover:underline mt-2 inline-block">
+                        View Details
+                    </a>
                 </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ prediction.crop.farm.name }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  {{ prediction.predicted_yield }} kg/ha
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ prediction.prediction_date|date:"M d, Y" }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <div class="flex items-center">
-                  <div class="w-16 bg-gray-200 rounded-full h-2.5 mr-2">
-                    <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ prediction.confidence|floatformat:0 }}%"></div>
-                  </div>
-                  <span>{{ prediction.confidence|floatformat:0 }}%</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="{% url 'predictions:crop_prediction' prediction.crop.pk %}" class="text-green-600 hover:text-green-900">Details</a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="mt-4">
-        <a href="{% url 'predictions:history' %}" class="text-green-600 hover:underline">View all predictions</a>
-      </div>
-      {% else %}
-      <div class="text-center py-8">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">No predictions yet</h3>
-        <p class="mt-1 text-sm text-gray-500">Generate your first yield prediction for a crop.</p>
-      </div>
-      {% endif %}
-    </div>
-  </div>
-
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="bg-green-600 px-6 py-4">
-      <h2 class="text-xl font-bold text-white">Crops Ready for Prediction</h2>
-    </div>
-    <div class="p-6">
-      {% if crops_ready %}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {% for crop in crops_ready %}
-        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-          <div class="flex justify-between">
-            <h3 class="font-medium">{{ crop.get_crop_type_display }}</h3>
-            <span class="text-sm text-gray-500">{{ crop.farm.name }}</span>
-          </div>
-          <p class="text-sm text-gray-600 mt-1">Planted on {{ crop.planting_date|date:"M d, Y" }}</p>
-          <div class="mt-3 flex justify-end">
-            <a href="{% url 'predictions:generate' crop.pk %}" class="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-              Predict Yield
-            </a>
-          </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500">No predictions yet. Generate your first prediction!</p>
+            {% endif %}
         </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="text-center py-8">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">No crops ready for prediction</h3>
-        <p class="mt-1 text-sm text-gray-500">Add crops to your farms to get started.</p>
-      </div>
-      {% endif %}
     </div>
-  </div>
+
+    <div class="glass-card mt-6">
+        <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Your Active Crops</h2>
+            
+            {% if crops %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Crop</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Farm</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Planted</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for crop in crops %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ crop.get_crop_type_display }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ crop.farm.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ crop.planting_date|date:"M d, Y" }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{% url 'predictions:generate_prediction' crop.id %}" 
+                                   class="text-green-600 hover:text-green-800 mr-3">
+                                    Predict
+                                </a>
+                                <a href="{% url 'predictions:crop_prediction' crop.id %}" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    History
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-500">No active crops found. Add crops to your farms first.</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

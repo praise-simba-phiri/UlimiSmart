@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Farm Activities{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                <i class="icon-notebook mr-2 text-primary-600 dark:text-primary-400"></i>
+                Farm Activities
+            </h1>
+            <p class="text-primary-600 dark:text-primary-400 mt-1">Record of all farming activities</p>
+        </div>
+        <a href="{% url 'activities:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 mt-4 md:mt-0">
+            <i class="icon-plus mr-2"></i> Add Activity
+        </a>
+    </div>
+
+    {% if activities %}
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Activity</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Farm</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for activity in activities %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mr-4">
+                                    <i class="
+                                        {% if activity.activity_type == 'planting' %}icon-plant
+                                        {% elif activity.activity_type == 'watering' %}icon-drop
+                                        {% elif activity.activity_type == 'fertilizing' %}icon-chemistry
+                                        {% elif activity.activity_type == 'weeding' %}icon-trash
+                                        {% elif activity.activity_type == 'harvesting' %}icon-basket-loaded
+                                        {% else %}icon-notebook{% endif %}
+                                        text-green-600 dark:text-green-400
+                                    "></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ activity.get_activity_type_display }}</div>
+                                    {% if activity.notes %}
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">{{ activity.notes }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            {{ activity.farm.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            {{ activity.date|date:"M d, Y" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{% url 'activities:detail' activity.pk %}" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 mr-3">
+                                <i class="icon-eye"></i>
+                            </a>
+                            <a href="{% url 'activities:update' activity.pk %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-3">
+                                <i class="icon-note"></i>
+                            </a>
+                            <a href="{% url 'activities:delete' activity.pk %}" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">
+                                <i class="icon-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 text-center py-12">
+        <i class="icon-notebook text-gray-400 text-5xl mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white">No activities recorded yet</h3>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by adding your first farm activity</p>
+        <div class="mt-6">
+            <a href="{% url 'activities:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <i class="icon-plus mr-2"></i> Add Activity
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

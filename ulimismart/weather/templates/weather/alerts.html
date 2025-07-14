@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <span class="text-red-600 dark:text-red-400">Weather</span> Alerts
+            </h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Important weather notifications for your farms
+            </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <select class="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                <option>All Farms</option>
+                {% for farm in farms %}
+                    <option>{{ farm.name }}</option>
+                {% endfor %}
+            </select>
+            <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <i class="fas fa-sync-alt mr-2"></i> Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-6 border border-white/20 dark:border-gray-700/50 mt-6">
+    {% if alerts %}
+        <div class="space-y-4">
+            {% for alert in alerts %}
+            <div class="border-l-4 {% if alert.severity == 'high' %}border-red-500 bg-red-50 dark:bg-red-900/20{% else %}border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20{% endif %} p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas {% if alert.severity == 'high' %}fa-exclamation-triangle text-red-500{% else %}fa-exclamation-circle text-yellow-500{% endif %} mt-1"></i>
+                    </div>
+                    <div class="ml-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium {% if alert.severity == 'high' %}text-red-800 dark:text-red-200{% else %}text-yellow-800 dark:text-yellow-200{% endif %}">
+                                {{ alert.event }} ({{ alert.farm }})
+                            </h3>
+                            <span class="text-xs {% if alert.severity == 'high' %}text-red-700 dark:text-red-300{% else %}text-yellow-700 dark:text-yellow-300{% endif %}">
+                                {{ alert.start|date:"M d, h:i A" }} - {{ alert.end|date:"M d, h:i A" }}
+                            </span>
+                        </div>
+                        <div class="mt-2 text-sm {% if alert.severity == 'high' %}text-red-700 dark:text-red-300{% else %}text-yellow-700 dark:text-yellow-300{% endif %}">
+                            <p>{{ alert.description }}</p>
+                        </div>
+                        <div class="mt-2">
+                            <a href="#" class="text-xs font-medium {% if alert.severity == 'high' %}text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300{% else %}text-yellow-600 dark:text-yellow-400 hover:text-yellow-500 dark:hover:text-yellow-300{% endif %}">
+                                View farm details →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-bell-slash text-gray-400 text-4xl mb-3"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">No active alerts</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">You'll be notified here when there are weather alerts for your farms</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

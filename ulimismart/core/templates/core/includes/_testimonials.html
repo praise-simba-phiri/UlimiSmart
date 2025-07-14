@@ -1,0 +1,46 @@
+<div class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">What Farmers Say</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Hear from farmers who are already using UlimiSmart
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for testimonial in testimonials %}
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2">
+                <div class="flex items-center mb-4">
+                    <div class="flex">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= testimonial.rating %}
+                                <i class="fas fa-star text-yellow-400"></i>
+                            {% else %}
+                                <i class="fas fa-star text-gray-300 dark:text-gray-500"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
+                    "{{ testimonial.content }}"
+                </p>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/20 rounded-full p-2">
+                        <i class="fas fa-user text-green-600 dark:text-green-400"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-sm font-medium text-gray-900 dark:text-white">{{ testimonial.name }}</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ testimonial.role }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="{% url 'core:feedback' %}" class="inline-block border border-green-600 text-green-600 dark:text-green-400 hover:bg-green-600 hover:text-white dark:hover:bg-green-700 px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                Share Your Experience
+            </a>
+        </div>
+    </div>
+</div>

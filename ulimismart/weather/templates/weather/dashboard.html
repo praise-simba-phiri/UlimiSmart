@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div x-data="{
+    selectedFarm: null,
+    farms: {{ farms|safe|default:'[]' }},
+    init() {
+        if (this.farms.length > 0) {
+            this.selectedFarm = this.farms[0].id;
+        }
+    }
+}">
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <span class="text-blue-600 dark:text-blue-400">Weather</span> Dashboard
+                </h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Real-time weather monitoring for your farms
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {% if farms %}
+                    <select x-model="selectedFarm" @change="window.location.href = `/weather/farm/${selectedFarm}/`" 
+                            class="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        {% for farm in farms %}
+                            <option value="{{ farm.id }}">{{ farm.name }} ({{ farm.location }})</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                <a href="{% url 'weather:forecast' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <i class="fas fa-cloud-sun mr-2"></i> View Forecast
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if no_farms %}
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-6 border border-white/20 dark:border-gray-700/50 mt-6 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <h2 class="text-xl font-semibold mt-4">No Farms Configured</h2>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">Add farms to view weather data</p>
+            <a href="{% url 'farms:create' %}" class="inline-block mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                Add Your First Farm
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

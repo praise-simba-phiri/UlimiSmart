@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-1vm0@j^@ur@#p-yutde7k@x19)#gs*vm-d513#@f!siv@e6p@*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "f972977a33ea.ngrok-free.app",
+]
 
 
 # Application definition
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
     'weather.apps.WeatherConfig',
     'reminders.apps.RemindersConfig',
     'dashboard.apps.DashboardConfig',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +151,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Tailwind CSS (optional)
 TAILWIND_APP_NAME = 'theme'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://f972977a33ea.ngrok-free.app',
+]
+
+OPENWEATHERMAP_API_KEY = 'f895480244e66fc84f3d041b41badcf3'
+
+AUTH_USER_MODEL = 'users.User'

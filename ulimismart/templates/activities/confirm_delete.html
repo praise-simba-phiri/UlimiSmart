@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Activity{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-red-600 dark:bg-red-700 p-6">
+            <h1 class="text-xl font-semibold text-white flex items-center">
+                <i class="icon-exclamation mr-2"></i>
+                Delete Activity
+            </h1>
+        </div>
+        
+        <div class="p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mr-4">
+                    <i class="
+                        {% if activity.activity_type == 'planting' %}icon-plant
+                        {% elif activity.activity_type == 'watering' %}icon-drop
+                        {% elif activity.activity_type == 'fertilizing' %}icon-chemistry
+                        {% elif activity.activity_type == 'weeding' %}icon-trash
+                        {% elif activity.activity_type == 'harvesting' %}icon-basket-loaded
+                        {% else %}icon-notebook{% endif %}
+                        text-red-600 dark:text-red-400
+                    "></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ activity.get_activity_type_display }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ activity.farm.name }} • {{ activity.date|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            
+            <p class="text-gray-700 dark:text-gray-300 my-6">Are you sure you want to delete this activity record? This action cannot be undone.</p>
+            
+            <form method="post" x-data="{ isLoading: false }" @submit.prevent="isLoading = true; $el.submit()">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'activities:detail' activity.pk %}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            :disabled="isLoading"
+                            :class="{ 'opacity-75 cursor-not-allowed': isLoading }">
+                        <span x-show="!isLoading">Delete Activity</span>
+                        <span x-show="isLoading" class="flex items-center">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Deleting...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,39 +3,49 @@
 {% block title %}Delete Crop{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-md">
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="bg-red-600 px-6 py-4">
-      <h1 class="text-xl font-bold text-white">Delete Crop</h1>
+<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-red-600 dark:bg-red-700 p-6">
+            <h1 class="text-xl font-semibold text-white flex items-center">
+                <i class="icon-exclamation mr-2"></i>
+                Delete Crop
+            </h1>
+        </div>
+        
+        <div class="p-6">
+            <div class="flex items-center mb-6">
+                <div class="flex-shrink-0 h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mr-4">
+                    <i class="icon-plant text-green-600 dark:text-green-400"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ crop.get_crop_type_display }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Planted on {{ crop.planting_date|date:"M d, Y" }}
+                    </p>
+                </div>
+            </div>
+            
+            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                Are you sure you want to delete this crop record? 
+                <strong class="text-red-600 dark:text-red-400">This action cannot be undone.</strong>
+            </p>
+            
+            <form method="post" x-data="{ isLoading: false }" @submit.prevent="isLoading = true; $el.submit()">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'farms:crop_list' crop.farm.pk %}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            :disabled="isLoading"
+                            :class="{ 'opacity-75 cursor-not-allowed': isLoading }">
+                        <i class="icon-trash mr-2"></i>
+                        <span x-show="!isLoading">Delete Crop</span>
+                        <span x-show="isLoading">Deleting...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    
-    <div class="p-6">
-      <div class="flex items-center mb-6">
-        <div class="flex-shrink-0 h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-          </svg>
-        </div>
-        <div>
-          <h2 class="text-lg font-medium text-gray-900">{{ crop.get_crop_type_display }}</h2>
-          <p class="text-sm text-gray-500">Planted on {{ crop.planting_date|date:"M d, Y" }}</p>
-        </div>
-      </div>
-      
-      <p class="text-gray-700 mb-6">Are you sure you want to delete this crop record? This action cannot be undone.</p>
-      
-      <form method="post">
-        {% csrf_token %}
-        <div class="flex justify-end space-x-3">
-          <a href="{% url 'farms:crop_list' crop.farm.pk %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
-            Cancel
-          </a>
-          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-            Delete Crop
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
 {% endblock %}

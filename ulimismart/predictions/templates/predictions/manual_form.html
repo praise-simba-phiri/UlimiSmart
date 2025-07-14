@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-container max-w-3xl">
+    <div class="glass-header">
+        <h1 class="text-2xl font-bold">{{ title }}</h1>
+    </div>
+
+    <div class="glass-card mt-6">
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for field in form %}
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        
+                        {% if field.name == 'fertilizer_used' or field.name == 'irrigation_used' %}
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                {{ field }}
+                                <span class="ml-2">{{ field.label }}</span>
+                            </label>
+                        </div>
+                        {% else %}
+                        {{ field }}
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                        <p class="text-red-500 text-xs italic mt-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                        <p class="text-gray-500 text-xs italic mt-1">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-8 flex justify-end space-x-4">
+                    <a href="{% url 'predictions:history' %}" 
+                       class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        Generate Prediction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

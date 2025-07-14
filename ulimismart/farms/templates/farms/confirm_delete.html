@@ -3,27 +3,47 @@
 {% block title %}Delete Farm{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-md">
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="bg-red-600 px-6 py-4">
-      <h1 class="text-xl font-bold text-white">Delete Farm</h1>
-    </div>
-    
-    <div class="p-6">
-      <p class="text-gray-700 mb-6">Are you sure you want to delete the farm <strong>"{{ farm.name }}"</strong>? This action cannot be undone.</p>
-      
-      <form method="post">
-        {% csrf_token %}
-        <div class="flex justify-end space-x-3">
-          <a href="{% url 'farms:detail' farm.pk %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
-            Cancel
-          </a>
-          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-            Delete Farm
-          </button>
+<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-red-600 dark:bg-red-700 p-6">
+            <h1 class="text-xl font-semibold text-white flex items-center">
+                <i class="icon-exclamation mr-2"></i>
+                Delete Farm
+            </h1>
         </div>
-      </form>
+        
+        <div class="p-6">
+            <div class="flex items-center mb-6">
+                <div class="flex-shrink-0 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mr-4">
+                    <i class="icon-layers text-red-600 dark:text-red-400"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ farm.name }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ farm.location }}</p>
+                </div>
+            </div>
+            
+            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                Are you sure you want to delete this farm? All associated crops and activities will also be deleted.
+                <strong class="text-red-600 dark:text-red-400">This action cannot be undone.</strong>
+            </p>
+            
+            <form method="post" x-data="{ isLoading: false }" @submit.prevent="isLoading = true; $el.submit()">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'farms:detail' farm.pk %}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            :disabled="isLoading"
+                            :class="{ 'opacity-75 cursor-not-allowed': isLoading }">
+                        <i class="icon-trash mr-2"></i>
+                        <span x-show="!isLoading">Delete Farm</span>
+                        <span x-show="isLoading">Deleting...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

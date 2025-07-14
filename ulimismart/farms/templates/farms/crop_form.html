@@ -4,62 +4,86 @@
 {% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Crop{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="bg-green-600 px-6 py-4">
-      <h1 class="text-2xl font-bold text-white">
-        {% if form.instance.pk %}
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-        Edit Crop
-        {% else %}
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Add New Crop
-        {% endif %}
-      </h1>
-      <p class="text-green-100">Farm: {{ farm.name }}</p>
-    </div>
-    
-    <div class="p-6">
-      <form method="post">
-        {% csrf_token %}
-        
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Crop Type</label>
-            {{ form.crop_type }}
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Planting Date</label>
-              {{ form.planting_date }}
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Expected Harvest Date</label>
-              {{ form.expected_harvest_date }}
-            </div>
-          </div>
-          
-          <div class="flex items-center">
-            {{ form.is_active }}
-            <label for="{{ form.is_active.id_for_label }}" class="ml-2 block text-sm text-gray-700">Active Crop</label>
-          </div>
-          
-          <div class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
-            <a href="{% if form.instance.pk %}{% url 'farms:crop_list' farm.pk %}{% else %}{% url 'farms:detail' farm.pk %}{% endif %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
-              Cancel
-            </a>
-            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-              {% if form.instance.pk %}Update{% else %}Add{% endif %} Crop
-            </button>
-          </div>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-primary-600 dark:bg-primary-700 p-6">
+            <h1 class="text-xl font-semibold text-white flex items-center">
+                {% if form.instance.pk %}
+                <i class="icon-note mr-2"></i>
+                Edit Crop
+                {% else %}
+                <i class="icon-plus mr-2"></i>
+                Add New Crop
+                {% endif %}
+            </h1>
+            <p class="text-primary-100 mt-1 flex items-center">
+                <i class="icon-layers mr-2"></i>
+                Farm: {{ farm.name }}
+            </p>
         </div>
-      </form>
+        
+        <form method="post" class="p-6" x-data="{
+            plantingDate: '{{ form.planting_date.value|default:'' }}',
+            harvestDate: '{{ form.expected_harvest_date.value|default:'' }}',
+            init() {
+                const today = new Date().toISOString().split('T')[0];
+                this.$refs.plantingDate.min = today;
+                this.$refs.harvestDate.min = today;
+            }
+        }">
+            {% csrf_token %}
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Crop Type</label>
+                    <div class="relative">
+                        {{ form.crop_type }}
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="icon-plant text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Planting Date</label>
+                        <input type="date" name="planting_date" id="id_planting_date" 
+                               x-ref="plantingDate" x-model="plantingDate" 
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white" required>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" x-show="plantingDate">
+                            Selected: <span x-text="new Date(plantingDate).toLocaleDateString()"></span>
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expected Harvest Date</label>
+                        <input type="date" name="expected_harvest_date" id="id_expected_harvest_date" 
+                               x-ref="harvestDate" x-model="harvestDate" 
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white">
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" x-show="harvestDate">
+                            Selected: <span x-text="new Date(harvestDate).toLocaleDateString()"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center">
+                    {{ form.is_active }}
+                    <label for="{{ form.is_active.id_for_label }}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                        Active Crop
+                    </label>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end space-x-3">
+                <a href="{% if form.instance.pk %}{% url 'farms:crop_list' farm.pk %}{% else %}{% url 'farms:detail' farm.pk %}{% endif %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    {% if form.instance.pk %}Update{% else %}Add{% endif %} Crop
+                </button>
+            </div>
+        </form>
     </div>
-  </div>
 </div>
 {% endblock %}

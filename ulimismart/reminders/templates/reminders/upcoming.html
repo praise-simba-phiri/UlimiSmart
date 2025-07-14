@@ -4,67 +4,70 @@
 {% block title %}Upcoming Reminders{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-800">Upcoming Reminders</h1>
-      <p class="text-green-600">Tasks due in the next 30 days</p>
-    </div>
-    <div class="mt-4 md:mt-0">
-      <a href="{% url 'reminders:list' %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        View All
-      </a>
-    </div>
-  </div>
-
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="bg-green-600 px-6 py-4">
-      <h2 class="text-xl font-bold text-white">Upcoming Tasks</h2>
-    </div>
-    <div class="p-6">
-      {% if reminders %}
-      <div class="space-y-4">
-        {% for reminder in reminders %}
-        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="font-medium text-gray-900">{{ reminder.title }}</h3>
-              <p class="text-sm text-gray-500 mt-1">{{ reminder.farm.name }} • {{ reminder.get_reminder_type_display }}</p>
-            </div>
-            <span class="text-sm {% if reminder.due_date == today %}text-yellow-600 font-medium{% else %}text-gray-500{% endif %}">
-              {{ reminder.due_date|date:"M d" }}
-              {% if reminder.due_date == today %}(Today){% endif %}
-            </span>
-          </div>
-          
-          {% if reminder.notes %}
-          <p class="mt-2 text-sm text-gray-600">{{ reminder.notes|truncatechars:100 }}</p>
-          {% endif %}
-          
-          <div class="mt-3 flex justify-end space-x-2">
-            <a href="{% url 'reminders:complete' reminder.pk %}" class="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-              Complete
-            </a>
-            <a href="{% url 'reminders:detail' reminder.pk %}" class="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-              Details
-            </a>
-          </div>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                <i class="icon-calendar mr-2 text-primary-600 dark:text-primary-400"></i>
+                Upcoming Reminders
+            </h1>
+            <p class="text-primary-600 dark:text-primary-400 mt-1">Tasks due in the next 30 days</p>
         </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="text-center py-12">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">No upcoming reminders</h3>
-        <p class="mt-1 text-sm text-gray-500">You're all caught up! Add new reminders to stay organized.</p>
-      </div>
-      {% endif %}
+        <div class="mt-4 md:mt-0">
+            <a href="{% url 'reminders:list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <i class="icon-list mr-2"></i> View All
+            </a>
+        </div>
     </div>
-  </div>
+
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-primary-600 dark:bg-primary-700 px-6 py-4">
+            <h2 class="text-xl font-bold text-white">Upcoming Tasks</h2>
+        </div>
+        <div class="p-6">
+            {% if reminders %}
+            <div class="space-y-4">
+                {% for reminder in reminders %}
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">{{ reminder.title }}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ reminder.farm.name }} • {{ reminder.get_reminder_type_display }}</p>
+                        </div>
+                        <span class="text-sm {% if reminder.due_date == today %}text-yellow-600 dark:text-yellow-400 font-medium{% else %}text-gray-500 dark:text-gray-400{% endif %}">
+                            {{ reminder.due_date|date:"M d" }}
+                            {% if reminder.due_date == today %}(Today){% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if reminder.notes %}
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ reminder.notes|truncatechars:100 }}</p>
+                    {% endif %}
+                    
+                    <div class="mt-3 flex justify-end space-x-2">
+                        <a href="{% url 'reminders:complete' reminder.pk %}" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="icon-check mr-1"></i> Complete
+                        </a>
+                        <a href="{% url 'reminders:detail' reminder.pk %}" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="icon-eye mr-1"></i> Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <i class="icon-calendar text-gray-400 text-5xl mb-4"></i>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">No upcoming reminders</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You're all caught up! Add new reminders to stay organized.</p>
+                <div class="mt-6">
+                    <a href="{% url 'reminders:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <i class="icon-plus mr-2"></i> Add Reminder
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

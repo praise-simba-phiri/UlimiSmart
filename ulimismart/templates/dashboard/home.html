@@ -1,156 +1,450 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard - UlimiSmart{% endblock %}
 
 {% block content %}
-<div x-data="{ activeTab: 'overview' }">
-    <h1 class="text-2xl font-bold mb-6">Welcome, {{ user.get_full_name|default:user.username }}</h1>
-    
-    <!-- Tabs -->
-    <div class="flex border-b mb-6">
-        <button @click="activeTab = 'overview'" 
-                :class="{ 'border-b-2 border-green-600 text-green-600': activeTab === 'overview' }"
-                class="px-4 py-2 font-medium">Overview</button>
-        <button @click="activeTab = 'farms'" 
-                :class="{ 'border-b-2 border-green-600 text-green-600': activeTab === 'farms' }"
-                class="px-4 py-2 font-medium">My Farms</button>
-        <button @click="activeTab = 'activities'" 
-                :class="{ 'border-b-2 border-green-600 text-green-600': activeTab === 'activities' }"
-                class="px-4 py-2 font-medium">Activities</button>
+<div x-data="{
+    activeTab: 'overview',
+    reminders: [],
+    weather: null,
+    predictions: [],
+    isLoading: true,
+    fetchData() {
+        this.isLoading = true;
+        
+        // Fetch reminders using Django URL
+        fetch('{% url "reminders:list" %}')
+            .then(res => res.json())
+            .then(data => {
+                this.reminders = data.slice(0, 5);
+            })
+            .catch(error => {
+                console.error('Error fetching reminders:', error);
+                this.reminders = [];
+            });
+            
+        // Fetch weather for first farm
+        {% if farms.exists %}
+            fetch('{% url "weather:farm_weather" farms.first.id %}')
+                .then(res => res.json())
+                .then(data => {
+                    this.weather = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                    this.weather = null;
+                });
+        {% endif %}
+            
+        // Fetch recent predictions
+        fetch('{% url "predictions:history" %}')
+            .then(res => res.json())
+            .then(data => {
+                this.predictions = data;
+            })
+            .catch(error => {
+                console.error('Error fetching predictions:', error);
+                this.predictions = [];
+            })
+            .finally(() => {
+                this.isLoading = false;
+            });
+    }
+}" x-init="fetchData()" class="space-y-6">
+    <!-- Welcome Header -->
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    Welcome back, <span class="text-green-600 dark:text-green-400">{{ user.get_full_name|default:user.username }}</span>
+                </h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Here's what's happening with your farms today
+                </p>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                <div class="flex space-x-3">
+                    <a href="{% url 'farms:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <i class="fas fa-plus mr-2"></i> New Farm
+                    </a>
+                    <a href="{% url 'activities:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:text-green-100 dark:bg-green-900/50 dark:hover:bg-green-800">
+                        <i class="fas fa-tasks mr-2"></i> Log Activity
+                    </a>
+                <button @click="fetchData" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
+                    <i class="fas fa-sync-alt mr-2" :class="{ 'animate-spin': isLoading }"></i> Refresh
+                </button>
+            </div>
+        </div>
     </div>
     
-    <!-- Overview Tab -->
-    <div x-show="activeTab === 'overview'" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Farm Summary -->
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Farm Summary</h2>
-                <p class="text-gray-600">Total Farms: {{ farms.count }}</p>
-                <p class="text-gray-600">Active Crops: {{ farms.first.crops.count }}</p>
-            </div>
-            
-            <!-- Weather -->
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Weather</h2>
-                {% if weather_data %}
-                    <p class="text-gray-600">Condition: {{ weather_data.get_condition_display }}</p>
-                    <p class="text-gray-600">Temperature: {{ weather_data.temperature }}°C</p>
-                    <p class="text-gray-600">Rainfall: {{ weather_data.rainfall }}mm</p>
-                {% else %}
-                    <p class="text-gray-600">No weather data available</p>
-                {% endif %}
-            </div>
-            
-            <!-- Quick Actions -->
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
-                <div class="space-y-2">
-                    <a href="{% url 'farms:create' %}" class="block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
-                        Add New Farm
-                    </a>
-                    <a href="{% url 'activities:create' %}" class="block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-center">
-                        Log Activity
-                    </a>
-                    <a href="{% url 'reminders:create' %}" class="block bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 text-center">
-                        Add Reminder
-                    </a>
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Total Farms Card -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-5 border border-white/20 dark:border-gray-700/50 hover:shadow-md transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-green-100/50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                    <i class="fas fa-tractor text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Farms</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ farms.count }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ farms.count|pluralize:"farm,farms" }} registered</p>
                 </div>
             </div>
         </div>
         
-        <!-- Recent Activities -->
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
-            {% if recent_activities %}
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Farm</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            {% for activity in recent_activities %}
+        <!-- Active Crops Card -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-5 border border-white/20 dark:border-gray-700/50 hover:shadow-md transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-blue-100/50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
+                    <i class="fas fa-seedling text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Active Crops</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ active_crops.count }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ active_crops.count|pluralize:"crop,crops" }} growing</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pending Activities Card -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-5 border border-white/20 dark:border-gray-700/50 hover:shadow-md transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-yellow-100/50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400">
+                    <i class="fas fa-tasks text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending Tasks</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ pending_activities.count }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">activities awaiting</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Yield Predictions Card -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-5 border border-white/20 dark:border-gray-700/50 hover:shadow-md transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-purple-100/50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">
+                    <i class="fas fa-chart-line text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Recent Predictions</p>
+                    <template x-if="!isLoading">
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" x-text="predictions.length"></p>
+                    </template>
+                    <template x-if="isLoading">
+                        <div class="h-8 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    </template>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">last 7 days</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Left Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Farm Status Widget -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">
+                        <i class="fas fa-tractor text-green-500 mr-2"></i>
+                        Farm Status Overview
+                    </h2>
+                    <a href="{% url 'farms:list' %}" class="text-sm text-green-600 dark:text-green-400 hover:underline">View All Farms</a>
+                </div>
+                
+                {% if farms %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50/50 dark:bg-gray-700/50">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ activity.date }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ activity.get_activity_type_display }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ activity.farm.name }}</td>
-                                    <td class="px-6 py-4">{{ activity.notes|truncatechars:50 }}</td>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Farm</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Location</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Crops</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="relative px-4 py-3"><span class="sr-only">Actions</span></th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p class="text-gray-600">No recent activities found.</p>
-            {% endif %}
-        </div>
-    </div>
-    
-    <!-- Farms Tab -->
-    <div x-show="activeTab === 'farms'" class="space-y-6">
-        <div class="bg-white p-6 rounded-lg shadow">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold">My Farms</h2>
-                <a href="{% url 'farms:create' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                    Add New Farm
-                </a>
+                            </thead>
+                            <tbody class="bg-white/50 dark:bg-gray-800/50 divide-y divide-gray-200 dark:divide-gray-700">
+                                {% for farm in farms|slice:":3" %}
+                                <tr>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-green-100/50 dark:bg-green-900/20 rounded-lg flex items-center justify-center text-green-600 dark:text-green-400">
+                                                <i class="fas fa-tractor"></i>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ farm.name }}</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ farm.size }} ha</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900 dark:text-white">{{ farm.location }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900 dark:text-white">
+                                            {% for crop in farm.crops.all|slice:":2" %}
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 mr-1">
+                                                    {{ crop.name }}
+                                                </span>
+                                            {% endfor %}
+                                            {% if farm.crops.count > 2 %}
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                                    +{{ farm.crops.count|add:"-2" }} more
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                            Active
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                        <a href="{% url 'farms:detail' farm.id %}" class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-3">View</a>
+                                        <a href="{% url 'farms:update' farm.id %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if farms.count > 3 %}
+                        <div class="mt-4 text-center">
+                            <a href="{% url 'farms:list' %}" class="text-sm text-green-600 dark:text-green-400 hover:underline">View all {{ farms.count }} farms</a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-tractor text-gray-400 text-4xl mb-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">No farms registered yet</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Get started by adding your first farm</p>
+                        <a href="{% url 'farms:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-plus mr-2"></i> Add Farm
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-            
-            {% if farms %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {% for farm in farms %}
-                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <h3 class="font-semibold text-lg mb-2">{{ farm.name }}</h3>
-                            <p class="text-gray-600 mb-1">Location: {{ farm.location }}</p>
-                            <p class="text-gray-600 mb-1">Size: {{ farm.size }} ha</p>
-                            <p class="text-gray-600 mb-3">Soil: {{ farm.get_soil_type_display }}</p>
-                            <div class="flex space-x-2">
-                                <a href="{% url 'farms:detail' farm.id %}" class="text-blue-600 hover:underline">View</a>
-                                <a href="{% url 'farms:update' farm.id %}" class="text-yellow-600 hover:underline">Edit</a>
+
+            <!-- Upcoming Reminders Widget -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">
+                        <i class="fas fa-bell text-yellow-500 mr-2"></i>
+                        Upcoming Reminders
+                    </h2>
+                    <div class="flex items-center space-x-2">
+                        <a href="{% url 'reminders:list' %}" class="text-sm text-green-600 dark:text-green-400 hover:underline">View All</a>
+                        <a href="{% url 'reminders:create' %}" class="text-sm text-white bg-green-600 hover:bg-green-700 px-2 py-1 rounded-md text-xs">
+                            <i class="fas fa-plus mr-1"></i> New
+                        </a>
+                    </div>
+                </div>
+                
+                <template x-if="reminders.length > 0 && !isLoading">
+                    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <template x-for="reminder in reminders" :key="reminder.id">
+                            <li class="py-3 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 px-2 rounded-lg transition-colors">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="p-2 rounded-lg" :class="{
+                                            'bg-green-100/50 text-green-600 dark:bg-green-900/20 dark:text-green-400': reminder.priority === 'low',
+                                            'bg-yellow-100/50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400': reminder.priority === 'medium',
+                                            'bg-red-100/50 text-red-600 dark:bg-red-900/20 dark:text-red-400': reminder.priority === 'high'
+                                        }">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate" x-text="reminder.title"></p>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400" x-text="formatDate(reminder.due_date)"></span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400" x-text="reminder.farm_name || 'General reminder'"></p>
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1" x-text="reminder.notes ? reminder.notes.substring(0, 60) + (reminder.notes.length > 60 ? '...' : '') : ''"></p>
+                                    </div>
+                                    <div>
+                                        <a :href="'/reminders/' + reminder.id + '/'" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                
+                <template x-if="reminders.length === 0 && !isLoading">
+                    <div class="text-center py-8">
+                        <i class="fas fa-bell-slash text-gray-400 text-4xl mb-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">No upcoming reminders</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Add reminders to stay on top of your farm activities</p>
+                        <a href="{% url 'reminders:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-plus mr-2"></i> Create Reminder
+                        </a>
+                    </div>
+                </template>
+                
+                <template x-if="isLoading">
+                    <div class="space-y-4">
+                        <div class="animate-pulse flex items-center space-x-4 p-3">
+                            <div class="rounded-full bg-gray-200 dark:bg-gray-700 h-10 w-10"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-gray-600">You don't have any farms yet.</p>
-            {% endif %}
-        </div>
-    </div>
-    
-    <!-- Activities Tab -->
-    <div x-show="activeTab === 'activities'" class="space-y-6">
-        <div class="bg-white p-6 rounded-lg shadow">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold">Recent Activities</h2>
-                <a href="{% url 'activities:create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Log New Activity
-                </a>
-            </div>
-            
-            {% if recent_activities %}
-                <div class="space-y-4">
-                    {% for activity in recent_activities %}
-                        <div class="border-b pb-4">
-                            <div class="flex justify-between">
-                                <h3 class="font-medium">{{ activity.get_activity_type_display }}</h3>
-                                <span class="text-gray-500">{{ activity.date }}</span>
+                        <div class="animate-pulse flex items-center space-x-4 p-3">
+                            <div class="rounded-full bg-gray-200 dark:bg-gray-700 h-10 w-10"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                             </div>
-                            <p class="text-gray-600 mt-1">Farm: {{ activity.farm.name }}</p>
-                            {% if activity.notes %}
-                                <p class="mt-2">{{ activity.notes }}</p>
-                            {% endif %}
                         </div>
-                    {% endfor %}
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+            <!-- Weather Forecast Widget -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <i class="fas fa-cloud-sun text-blue-500 mr-2"></i>
+                    Weather Forecast
+                </h2>
+                
+                <template x-if="weather && !isLoading">
+                    <div>
+                        <div class="flex items-center justify-between mb-4 p-4 bg-blue-50/50 dark:bg-blue-900/20 rounded-lg">
+                            <div>
+                                <div class="flex items-center">
+                                    <i :class="'fas ' + weather.current.icon + ' text-3xl text-blue-500 mr-3'"></i>
+                                    <span class="text-3xl font-bold text-gray-900 dark:text-white" x-text="weather.current.temperature + '°C'"></span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 capitalize" x-text="weather.current.condition"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500 dark:text-gray-400" x-text="'Humidity: ' + weather.current.humidity + '%'"></p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400" x-text="'Rain: ' + weather.current.rainfall + 'mm'"></p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400" x-text="'Wind: ' + weather.current.wind_speed + ' km/h'"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <template x-for="day in weather.forecast.slice(0, 4)" :key="day.date">
+                                <div class="bg-white/50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white" x-text="day.day"></span>
+                                        <i :class="'fas ' + day.icon + ' text-blue-500'"></i>
+                                    </div>
+                                    <div class="mt-2 flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">High</span>
+                                        <span class="text-sm font-medium" x-text="day.max_temp + '°C'"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Low</span>
+                                        <span class="text-sm font-medium" x-text="day.min_temp + '°C'"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Rain</span>
+                                        <span class="text-sm font-medium" x-text="day.rainfall + 'mm'"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="{% url 'weather:forecast' %}" class="text-sm text-green-600 dark:text-green-400 hover:underline">Detailed Forecast</a>
+                        </div>
+                    </div>
+                </template>
+                
+                <template x-if="!weather && !isLoading">
+                    <div class="text-center py-8">
+                        <i class="fas fa-cloud-exclamation text-gray-400 text-4xl mb-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">Weather unavailable</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">We couldn't fetch weather data at this time</p>
+                        <button @click="fetchData" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-sync-alt mr-2"></i> Try Again
+                        </button>
+                    </div>
+                </template>
+                
+                <template x-if="isLoading">
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="h-20 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                            <div class="h-20 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                            <div class="h-20 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                            <div class="h-20 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Recent Activities Widget -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-sm p-6 border border-white/20 dark:border-gray-700/50">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">
+                        <i class="fas fa-tasks text-green-500 mr-2"></i>
+                        Recent Activities
+                    </h2>
+                    <a href="{% url 'activities:list' %}" class="text-sm text-green-600 dark:text-green-400 hover:underline">View All</a>
                 </div>
-                <div class="mt-4">
-                    <a href="{% url 'activities:list' %}" class="text-green-600 hover:underline">View all activities</a>
-                </div>
-            {% else %}
-                <p class="text-gray-600">No activities found.</p>
-            {% endif %}
+                
+                {% if recent_activities %}
+                    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                        {% for activity in recent_activities|slice:":4" %}
+                            <li class="py-3 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 px-2 rounded-lg transition-colors">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 pt-1">
+                                        <div class="p-2 rounded-lg bg-green-100/50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                                            <i class="fas fa-{{ activity.get_icon }}"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                                {{ activity.get_activity_type_display }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ activity.date|timesince }} ago
+                                            </p>
+                                        </div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ activity.farm.name }}
+                                        </p>
+                                        {% if activity.notes %}
+                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                {{ activity.notes }}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'activities:create' %}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-plus mr-1"></i> Log Activity
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-clipboard-list text-gray-400 text-4xl mb-3"></i>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">No recent activities</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Start logging your farm activities</p>
+                        <a href="{% url 'activities:create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-plus mr-2"></i> Log Activity
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

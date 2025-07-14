@@ -1,0 +1,116 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block main %}
+<!-- Feedback Header -->
+<section class="relative py-16 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-4">Share Your Feedback</h1>
+        <p class="text-xl max-w-2xl mx-auto text-green-100 dark:text-green-200">
+            Your opinion helps us improve UlimiSmart for farmers in Malawi
+        </p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"></div>
+</section>
+
+<!-- Feedback Content -->
+<section class="py-20 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="flex flex-col md:flex-row gap-12 items-center">
+            <!-- Feedback Illustration -->
+            <div class="md:w-1/2 hidden md:block">
+                <div class="relative">
+                    <div class="absolute -top-6 -left-6 w-24 h-24 bg-green-100 dark:bg-green-900/20 rounded-full"></div>
+                    <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-green-100 dark:bg-green-900/20 rounded-full"></div>
+                    <div class="relative bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-10">
+                        <img src="{% static 'core/images/feedback-illustration.svg' %}" alt="Feedback Illustration" class="w-full h-auto">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feedback Form -->
+            <div class="md:w-1/2">
+                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-green-100 dark:bg-green-900/20 p-3 rounded-lg mr-4">
+                            <i class="fas fa-comment-alt text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Tell Us What You Think</h2>
+                    </div>
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                        <div class="mb-6 space-y-3">
+                            {% for message in messages %}
+                                <div x-data="{ show: true }" x-show="show" x-transition
+                                    class="rounded-md p-4 {% if message.tags == 'error' %}bg-red-50 dark:bg-red-900/30 border-red-100 dark:border-red-800/50{% else %}bg-green-50 dark:bg-green-900/30 border-green-100 dark:border-green-800/50{% endif %} border backdrop-blur-sm">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle text-red-500 dark:text-red-400{% else %}fa-check-circle text-green-500 dark:text-green-400{% endif %} h-5 w-5"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium {% if message.tags == 'error' %}text-red-800 dark:text-red-200{% else %}text-green-800 dark:text-green-200{% endif %}">
+                                                {{ message }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="space-y-4">
+                            {{ form.name }}
+                            {{ form.email }}
+                            
+                            <!-- Custom Rating Input -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Rating
+                                </label>
+                                <div class="flex items-center space-x-2">
+                                    {% for i in "12345" %}
+                                    <button type="button" @click="$refs.rating.value = '{{ forloop.counter }}'" 
+                                            class="text-2xl focus:outline-none"
+                                            :class="{
+                                                'text-yellow-400': {{ forloop.counter }} <= ($refs.rating.value || 0),
+                                                'text-gray-300 dark:text-gray-500': {{ forloop.counter }} > ($refs.rating.value || 0)
+                                            }">
+                                        ★
+                                    </button>
+                                    {% endfor %}
+                                    <input type="hidden" x-ref="rating" name="rating" value="{{ form.rating.value|default:'0' }}">
+                                </div>
+                            </div>
+                            
+                            {{ form.comments }}
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Submit Feedback
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-16 text-center">
+            <h3 class="text-xl font-medium mb-4 text-gray-900 dark:text-white">Other Ways to Contribute</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+                Join our community of farmers helping to shape the future of agriculture technology in Malawi.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{% url 'core:contact' %}?subject=Beta%20Testing" class="inline-flex items-center px-6 py-3 border border-green-600 text-green-600 dark:text-green-400 hover:bg-green-600 hover:text-white dark:hover:bg-green-700 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-flask mr-2"></i> Beta Testing Program
+                </a>
+                <a href="{% url 'core:contact' %}?subject=Feature%20Request" class="inline-flex items-center px-6 py-3 border border-green-600 text-green-600 dark:text-green-400 hover:bg-green-600 hover:text-white dark:hover:bg-green-700 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-lightbulb mr-2"></i> Suggest a Feature
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

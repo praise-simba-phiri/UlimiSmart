@@ -1,0 +1,149 @@
+{% extends "core/base.html" %}
+
+{% block main %}
+<!-- Contact Header -->
+<section class="py-16 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-4">Contact Us</h1>
+        <p class="text-xl max-w-2xl mx-auto text-green-100 dark:text-green-200">
+            We'd love to hear from you! Get in touch with our team.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Content -->
+<section class="py-20 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Contact Form -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Send Us a Message</h2>
+                
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if messages %}
+                    <div class="mb-6 space-y-3">
+                        {% for message in messages %}
+                            <div x-data="{ show: true }" x-show="show" x-transition
+                                class="rounded-md p-4 {% if message.tags == 'error' %}bg-red-50 dark:bg-red-900/30 border-red-100 dark:border-red-800/50{% else %}bg-green-50 dark:bg-green-900/30 border-green-100 dark:border-green-800/50{% endif %} border backdrop-blur-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle text-red-500 dark:text-red-400{% else %}fa-check-circle text-green-500 dark:text-green-400{% endif %} h-5 w-5"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium {% if message.tags == 'error' %}text-red-800 dark:text-red-200{% else %}text-green-800 dark:text-green-200{% endif %}">
+                                            {{ message }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {{ form.as_p }}
+                    
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02]">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Contact Info -->
+            <div>
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Our Contact Information</h2>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/20 rounded-lg p-3">
+                            <i class="fas fa-map-marker-alt text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">Address</h3>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Mzuzu University<br>
+                                Private Bag 201<br>
+                                Luwinga, Mzuzu 2, Malawi
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/20 rounded-lg p-3">
+                            <i class="fas fa-envelope text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">Email</h3>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                <a href="mailto:info@ulimismart.com" class="hover:text-green-600 dark:hover:text-green-400 transition-colors">info@ulimismart.com</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/20 rounded-lg p-3">
+                            <i class="fas fa-phone-alt text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">Phone</h3>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                <a href="tel:+265123456789" class="hover:text-green-600 dark:hover:text-green-400 transition-colors">+265 123 456 789</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/20 rounded-lg p-3">
+                            <i class="fas fa-clock text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">Working Hours</h3>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Monday - Friday: 8:00 AM - 5:00 PM<br>
+                                Saturday: 9:00 AM - 1:00 PM<br>
+                                Sunday: Closed
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900/20 p-3 rounded-full transition-colors">
+                            <i class="fab fa-facebook-f text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"></i>
+                        </a>
+                        <a href="#" class="bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900/20 p-3 rounded-full transition-colors">
+                            <i class="fab fa-twitter text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"></i>
+                        </a>
+                        <a href="#" class="bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900/20 p-3 rounded-full transition-colors">
+                            <i class="fab fa-instagram text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"></i>
+                        </a>
+                        <a href="#" class="bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900/20 p-3 rounded-full transition-colors">
+                            <i class="fab fa-linkedin-in text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="bg-gray-50 dark:bg-gray-800 py-12">
+    <div class="container mx-auto px-4">
+        <div class="rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3788.141434492985!2d33.99121541536705!3d-11.452968634541292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x191d35a4d9f7b3a5%3A0x5e7a1c9b0a5a5a5a!2sMzuzu%20University!5e0!3m2!1sen!2smw!4v1620000000000!5m2!1sen!2smw" 
+                width="100%" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy"
+                class="dark:filter dark:brightness-75 dark:contrast-110"
+            ></iframe>
+        </div>
+    </div>
+</section>
+{% endblock %}

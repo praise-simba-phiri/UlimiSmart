@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+
+{% block main %}
+<!-- FAQ Header -->
+<section class="py-16 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+        <p class="text-xl max-w-2xl mx-auto text-green-100 dark:text-green-200">
+            Find answers to common questions about UlimiSmart
+        </p>
+    </div>
+</section>
+
+<!-- FAQ Content -->
+<section class="py-20 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="space-y-6">
+            {% for faq in faqs %}
+            <div x-data="{ open: false }" class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all duration-300">
+                <button 
+                    @click="open = !open" 
+                    class="w-full flex justify-between items-center p-6 text-left bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ faq.question }}</h3>
+                    <span class="ml-4">
+                        <i x-show="!open" class="fas fa-plus text-green-600 dark:text-green-400"></i>
+                        <i x-show="open" class="fas fa-minus text-green-600 dark:text-green-400"></i>
+                    </span>
+                </button>
+                <div x-show="open" x-collapse class="px-6 pb-6 text-gray-600 dark:text-gray-300">
+                    {{ faq.answer|linebreaks }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-16 text-center">
+            <p class="text-lg mb-6 text-gray-600 dark:text-gray-300">
+                Still have questions? We're here to help!
+            </p>
+            <a href="{% url 'core:contact' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                Contact Our Support Team
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,120 @@
+<footer class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-white/20 dark:border-gray-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Logo and Description -->
+            <div class="md:col-span-1">
+                <div class="flex items-center text-green-600 dark:text-green-400 mb-4">
+                    <i class="fas fa-leaf text-2xl mr-2"></i>
+                    <span class="text-xl font-bold">UlimiSmart</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Revolutionizing agriculture in Malawi through AI-powered farm management and yield prediction.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-white mb-4">
+                    Quick Links
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'core:home' %}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'core:how_it_works' %}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            How It Works
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'core:team' %}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Our Team
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'core:faq' %}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            FAQ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'core:contact' %}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Resources -->
+            <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-white mb-4">
+                    Resources
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Documentation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Farming Guides
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Blog
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-sm text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                            Research Papers
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Contact Info -->
+            <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-white mb-4">
+                    Contact Us
+                </h3>
+                <address class="not-italic text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                    <div class="flex items-start">
+                        <i class="fas fa-map-marker-alt mt-1 mr-2 text-green-600 dark:text-green-400"></i>
+                        <span>Mzuzu University, Private Bag 201, Luwinga, Mzuzu 2, Malawi</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope mr-2 text-green-600 dark:text-green-400"></i>
+                        <a href="mailto:info@ulimismart.com" class="hover:text-green-600 dark:hover:text-green-400 transition-colors">info@ulimismart.com</a>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone-alt mr-2 text-green-600 dark:text-green-400"></i>
+                        <a href="tel:+265123456789" class="hover:text-green-600 dark:hover:text-green-400 transition-colors">+265 123 456 789</a>
+                    </div>
+                </address>
+            </div>
+        </div>
+        
+        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-sm text-center text-gray-500 dark:text-gray-400">
+                &copy; {% now "Y" %} UlimiSmart. All rights reserved. Developed by Group 5 at Mzuzu University.
+            </p>
+        </div>
+    </div>
+</footer>
