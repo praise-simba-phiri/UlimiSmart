@@ -157,6 +157,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://f972977a33ea.ngrok-free.app',
 ]
 
-OPENWEATHERMAP_API_KEY = 'f895480244e66fc84f3d041b41badcf3'
+OPENWEATHERMAP_API_KEY = ''
 
 AUTH_USER_MODEL = 'users.User'
